@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureChat — Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-body">
+
+    <!-- Floating petals background -->
+    <div class="petal-bg" aria-hidden="true">
+        <span class="petal p1">🌸</span>
+        <span class="petal p2">🌷</span>
+        <span class="petal p3">🌸</span>
+        <span class="petal p4">🌷</span>
+        <span class="petal p5">🌸</span>
+        <span class="petal p6">🌷</span>
+    </div>
+
+    <div class="auth-wrapper">
+        <!-- Brand -->
+        <div class="auth-brand">
+            <div class="auth-logo">💬</div>
+            <h1 class="auth-title">SecureChat</h1>
+            <p class="auth-subtitle">🔒 End-to-End Encrypted Messaging</p>
+        </div>
+
+        <!-- Card -->
+        <div class="auth-card">
+            <!-- Tab switcher -->
+            <div class="auth-tabs" role="tablist">
+                <button id="loginTab" class="auth-tab active" role="tab" aria-selected="true">Sign In</button>
+                <button id="registerTab" class="auth-tab" role="tab" aria-selected="false">Create Account</button>
+                <div class="auth-tab-indicator" id="tabIndicator"></div>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active-form" autocomplete="on">
+                <div class="field-group">
+                    <div class="field-icon">👤</div>
+                    <input type="text" id="loginUsername" class="field-input"
+                           placeholder="Username" autocomplete="username" required>
+                </div>
+                <div class="field-group">
+                    <div class="field-icon">🔑</div>
+                    <input type="password" id="loginPassword" class="field-input"
+                           placeholder="Password" autocomplete="current-password" required>
+                    <button type="button" class="field-toggle" id="toggleLoginPwd" aria-label="Show password">👁</button>
+                </div>
+                <button type="submit" class="auth-btn" id="loginBtn">
+                    <span class="btn-text">Sign In</span>
+                    <span class="btn-icon">→</span>
+                </button>
+                <div id="loginMessage" class="auth-message" role="alert"></div>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form" autocomplete="off">
+                <div class="field-group">
+                    <div class="field-icon">👤</div>
+                    <input type="text" id="registerUsername" class="field-input"
+                           placeholder="Choose a username" autocomplete="username" required>
+                </div>
+                <div class="field-group">
+                    <div class="field-icon">🔑</div>
+                    <input type="password" id="registerPassword" class="field-input"
+                           placeholder="Choose a password (min 6 chars)" autocomplete="new-password" required>
+                    <button type="button" class="field-toggle" id="toggleRegPwd" aria-label="Show password">👁</button>
+                </div>
+                <button type="submit" class="auth-btn" id="registerBtn">
+                    <span class="btn-text">Create Account</span>
+                    <span class="btn-icon">✨</span>
+                </button>
+                <div id="registerMessage" class="auth-message" role="alert"></div>
+            </form>
+        </div>
+
+        <p class="auth-footer">Your messages are encrypted. Nobody can read them but you.</p>
+    </div>
+
+<script src="script.js"></script>
+</body>
+</html>

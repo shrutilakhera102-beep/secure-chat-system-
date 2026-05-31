@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Network Error</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; margin: 10px; }
+        .result { margin: 10px 0; padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; }
+    </style>
+</head>
+<body>
+    <h1>Debug Network Error</h1>
+    <p>Testing different API endpoints to identify the issue...</p>
+    
+    <button onclick="testAuth()">Test Auth Endpoint</button>
+    <button onclick="testMessages()">Test Messages Endpoint</button>
+    <button onclick="testImageUpload()">Test Image Upload</button>
+    
+    <div id="result" class="result" style="display: none;"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:8082';
+        
+        async function testAuth() {
+            await testEndpoint('/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: 'test', password: 'test' })
+            }, 'Auth');
+        }
+        
+        async function testMessages() {
+            await testEndpoint('/messages/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sender: 'test',
+                    receiver: 'test2',
+                    content: 'test message'
+                })
+            }, 'Messages');
+        }
+        
+        async function testImageUpload() {
+            const formData = new FormData();
+            formData.append('sender', 'test');
+            formData.append('receiver', 'test2');
+            formData.append('image', new Blob(['test'], { type: 'text/plain' }));
+            
+            await testEndpoint('/messages/send-image', {
+                method: 'POST',
+                body: formData
+            }, 'Image Upload');
+        }
+        
+        async function testEndpoint(endpoint, options, testName) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `Testing ${testName}...`;
+
+            try {
+                console.log(`Testing ${endpoint}:`, options);
+                
+                const response = await fetch(`${API_BASE}${endpoint}`, options);
+                console.log(`${testName} response:`, response);
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<strong>${testName} Success!</strong> Status: ${response.status}`;
+                    resultDiv.style.background = '#d4edda';
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `<strong>${testName} Failed!</strong><br>Status: ${response.status}<br>Error: ${errorText}`;
+                    resultDiv.style.background = '#f8d7da';
+                }
+            } catch (error) {
+                console.error(`${testName} error:`, error);
+                resultDiv.innerHTML = `<strong>${testName} Network Error!</strong><br>${error.message}`;
+                resultDiv.style.background = '#f8d7da';
+            }
+        }
+    </script>
+</body>
+</html>

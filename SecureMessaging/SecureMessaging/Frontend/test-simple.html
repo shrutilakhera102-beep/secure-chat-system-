@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Image Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; margin: 10px; }
+        .result { margin: 10px 0; padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; }
+    </style>
+</head>
+<body>
+    <h1>Test Image Upload to Server</h1>
+    
+    <input type="file" id="imageInput" accept="image/*">
+    <br><br>
+    
+    <button onclick="testImageUpload()">Test Upload</button>
+    <button onclick="testServerConnection()">Test Server</button>
+    
+    <div id="result" class="result" style="display: none;"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:8081';
+        
+        // Test server connection
+        async function testServerConnection() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = 'Testing server connection...';
+
+            try {
+                const response = await fetch(`${API_BASE}/messages/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sender: 'test',
+                        receiver: 'test',
+                        content: 'test message'
+                    })
+                });
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<strong>Server is running!</strong> Status: ${response.status}`;
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `<strong>Server Error!</strong> Status: ${response.status}, Error: ${errorText}`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>Connection Error:</strong> ${error.message}`;
+            }
+        }
+
+        // Test image upload
+        async function testImageUpload() {
+            const fileInput = document.getElementById('imageInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select an image first');
+                return;
+            }
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = 'Uploading image...';
+
+            try {
+                const formData = new FormData();
+                formData.append('sender', 'testuser');
+                formData.append('receiver', 'testuser2');
+                formData.append('image', file);
+
+                const response = await fetch(`${API_BASE}/messages/send-image`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `<strong>Success!</strong> Image uploaded. Status: ${response.status}`;
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `<strong>Upload Failed!</strong> Status: ${response.status}, Error: ${errorText}`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>Network Error:</strong> ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

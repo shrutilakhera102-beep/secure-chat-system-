@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Test</h1>
+    <button onclick="testRegister()">Test Register</button>
+    <div id="result"></div>
+
+    <script>
+        async function testRegister() {
+            const resultDiv = document.getElementById('result');
+            try {
+                const response = await fetch('http://localhost:8080/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'testuser2', password: 'testpass' })
+                });
+                
+                const result = await response.text();
+                resultDiv.innerHTML = `<h3>Status: ${response.status}</h3><pre>${result}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<h3>Error:</h3><pre>${error.message}</pre>`;
+            }
+        }
+    </script>
+</body>
+</html>

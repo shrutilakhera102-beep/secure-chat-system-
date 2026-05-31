@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Image Upload</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-area { border: 2px solid #ccc; padding: 20px; margin: 20px 0; }
+        .preview { max-width: 200px; margin: 10px 0; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin: 10px 0; padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; }
+    </style>
+</head>
+<body>
+    <h1>Image Upload Test</h1>
+    
+    <div class="test-area">
+        <h3>Step 1: Select Image</h3>
+        <input type="file" id="imageInput" accept="image/*">
+        <br><br>
+        
+        <h3>Step 2: Preview</h3>
+        <img id="preview" class="preview" style="display: none;">
+        <br><br>
+        
+        <h3>Step 3: Send Test</h3>
+        <label>Sender:</label> <input type="text" id="sender" value="testuser"><br><br>
+        <label>Receiver:</label> <input type="text" id="receiver" value="testuser2"><br><br>
+        <button onclick="sendImage()">Send Image</button>
+        
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8081';
+        let selectedImage = null;
+
+        // Image selection
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file');
+                return;
+            }
+            
+            selectedImage = file;
+            
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('preview').src = e.target.result;
+                document.getElementById('preview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Send image
+        async function sendImage() {
+            const sender = document.getElementById('sender').value;
+            const receiver = document.getElementById('receiver').value;
+            const resultDiv = document.getElementById('result');
+            
+            if (!selectedImage || !sender || !receiver) {
+                alert('Please fill all fields and select an image');
+                return;
+            }
+
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = 'Sending...';
+
+            try {
+                const formData = new FormData();
+                formData.append('sender', sender);
+                formData.append('receiver', receiver);
+                formData.append('image', selectedImage);
+
+                console.log('Sending to:', `${API_BASE}/messages/send-image`);
+                
+                const response = await fetch(`${API_BASE}/messages/send-image`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                console.log('Response:', response);
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<strong>Success!</strong> Image sent successfully. Status: ${response.status}`;
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `<strong>Error!</strong> Status: ${response.status}, Error: ${errorText}`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>Network Error:</strong> ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
